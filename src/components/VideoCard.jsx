@@ -55,9 +55,14 @@ function VideoCard({displayVideo,setDeleteVideoStatus}) {
     }
   }
 
+  const dragStarted = (e, id) =>{
+    console.log(`video with ${id} started dragging`);
+    e.dataTransfer.setData("videoID",id)
+  }
+
   return (
     <>
-        <Card style={{ width: '18rem' }}>
+        <Card style={{ width: '18rem' }} draggable onDragStart={(e)=>dragStarted(e,displayVideo.id)}>   {/*ivide dragStarted enn function call aak athileek display.id and event (e) pass cheythu */}
             {/* <Card.Img variant="top" src="https://images.genius.com/426b1145a564cd8eb1a9a2989b53cf02.800x1000x1.jpg" /> */}
             <Card.Img variant="top" src={displayVideo.thumbnailUrl} height={"290px"}
               onClick={handleShow} />

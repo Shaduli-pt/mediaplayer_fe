@@ -49,3 +49,13 @@ export const getAllCategories = async ()=>{
 export const deleteVideoCategory = async(data)=>{     //ivide id or data vilikkam
     return await commonApi('DELETE',`${serverurl}/categories/${data}`,{})  // ath thanne ivideyum vilikkuka
 }
+
+// get video details by id
+export const getVideoDetailsById = async (id)=>{
+    return await commonApi('GET',`${serverurl}/videos/${id}`,'')
+}
+
+//update category
+export const updateCategory = async(id, data)=>{
+    return await commonApi('PUT',`${serverurl}/categories/${id}`,data)      //ivide update cheyyukayan so we use the method PUT
+}

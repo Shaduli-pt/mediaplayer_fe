@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
-import { addCategory, deleteVideoCategory, getAllCategories} from '../services/allApi';
+import { addCategory, deleteVideoCategory, getAllCategories, getVideoDetailsById, updateCategory} from '../services/allApi';
 
 function Category() {
 
@@ -55,6 +55,29 @@ function Category() {
       getCategories()                 // so we did thi step now automatically refresh aavum.delete akyal appothanne visible aakum
     }
 
+    const dragOver = (e) =>{
+      e.preventDefault()            //ith dragg aayi related aayittulla step alla auto refresh aayi data clear aayi pokathirikkan koduthathan
+      console.log(`inside Dragover`);
+      getCategories()
+    }
+
+    const videoDropped = async(e, id)=>{
+      console.log(`drpped inside category with ID ${id}`);
+      const vId = e.dataTransfer.getData('videoId');
+      console.log(`video with id ${vId} is dropped in category with id ${id}`);
+      const result = await getVideoDetailsById(vId)
+      console.log(result);
+      const {data} = result;
+
+      let selectedCategory = categories.find((item=>item.id==id));
+      console.log("selectedCategory");
+      console.log(selectedCategory);
+      selectedCategory.allVideos.push(data);
+      console.log("final category");
+      console.log(selectedCategory);
+      const new_result = await updateCategory(id,selectedCategory)
+    }
+
   return (
     <>
       <div>
@@ -91,10 +114,21 @@ function Category() {
 
             {
               categories?.map((item)=>(
-                <div className='border border-secondary rounded p-3 m-5'>
-                    <div className="d-flex justify-content-between align-item-center">
-                      <h6>{item.categoryName}</h6>
-                      <button className='btn btn-danger' onClick={(e)=>deleteCategory(item.id)}><i class="fa-solid fa-trash"></i></button>
+                <div className='border border-secondary rounded p-3 m-5' droppable
+                  onDragOver={(e)=>dragOver(e)}
+                  onDrop={(e)=>videoDropped(e,item.id)}>
+                    <div className="d-flex justify-content-between align-item-center" style={{flexDirection:'column'}}>
+                      <h6>{item.categoryName}</h6>                    
+                      {
+                        item.allVideos?.length>0?
+                        item.allVideos.map((video)=>(
+                              <img src={video.thumbnailUrl} alt="" style={{height:'150px',width:'100%',marginBottom:'15px'}}/>
+                        )):
+                        <p>No data found</p>
+                      }
+
+                        <button className='btn btn-danger' onClick={(e)=>deleteCategory(item.id)}><i class="fa-solid fa-trash"></i></button>
+
                     </div>
                 </div>
               ))
